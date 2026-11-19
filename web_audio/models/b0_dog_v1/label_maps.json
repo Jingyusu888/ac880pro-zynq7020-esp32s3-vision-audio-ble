@@ -1,0 +1,8 @@
+{
+ "four_class": [
+  "active",
+  "alert",
+  "rest"
+ ],
+ "merge_active": true
+}

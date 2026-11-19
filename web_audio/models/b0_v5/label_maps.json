@@ -1,0 +1,14 @@
+{
+ "four_class": [
+  "affiliative_relaxed",
+  "request_seeking",
+  "threat_discomfort",
+  "pain_distress"
+ ],
+ "coarse": {
+  "affiliative_relaxed": "positive_or_request",
+  "request_seeking": "positive_or_request",
+  "threat_discomfort": "negative_or_distress",
+  "pain_distress": "negative_or_distress"
+ }
+}

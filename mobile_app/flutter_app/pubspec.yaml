@@ -1,0 +1,29 @@
+name: petlink_app
+description: PetLink 宠物情绪识别 App（Flutter 骨架）— 通过 BLE 连接 ESP32 板，实时识别/远程控制/本地历史。
+publish_to: 'none'
+version: 0.3.0+4
+
+environment:
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # BLE：安卓 + iOS 唯一能上架的路线（Web Bluetooth iOS 全系不支持）
+  flutter_blue_plus: ^1.32.0
+  # 状态管理
+  provider: ^6.1.2
+  # 运行时权限（Android 12+ 蓝牙扫描/连接权限申请）
+  permission_handler: ^11.3.1
+  # 本地持久化（按 round 去重）
+  sqflite: ^2.4.1
+  path_provider: ^2.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

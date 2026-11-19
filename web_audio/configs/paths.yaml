@@ -1,0 +1,13 @@
+paths:
+  project_root: "."
+  data_dir: data
+  raw_audio_dir: data/raw/audio          # 复制自 pet_link（16k 整理音频，只读使用）
+  raw_audio_original_dir: data/raw/raw_audio
+  external_dir: data/external            # 外部数据集下载区（每数据集一子目录）
+  processed_dir: data/processed          # mono_8k 等工作副本
+  manifests_dir: metadata                # v2 封存 + v3 系列
+  analysis_dir: analysis                 # 特征表、评估产物
+  models_dir: models
+  golden_dir: tests/golden
+  ffmpeg_bin: ffmpeg
+  ffprobe_bin: ffprobe

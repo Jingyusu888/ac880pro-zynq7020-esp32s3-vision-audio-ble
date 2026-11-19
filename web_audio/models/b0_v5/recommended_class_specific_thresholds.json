@@ -1,0 +1,13 @@
+{
+ "coarse_confidence_threshold": 0.7,
+ "coarse_margin_threshold": 0.15,
+ "default_fine_confidence_threshold": 0.75,
+ "default_fine_margin_threshold": 0.2,
+ "request_seeking_confidence_threshold": 0.8,
+ "request_seeking_margin_threshold": 0.2,
+ "pain_distress_confidence_threshold": 0.75,
+ "pain_distress_margin_threshold": 0.2,
+ "tuned": false,
+ "selection_split": "val",
+ "tuning_verdict": "NO_DOMINATING_CANDIDATE: val 上无任何阈值组合在 coverage 约束内实现 request_false=0（最佳 request_false=5）；保留默认阈值。val=117 行、跨域，调参结论性不足。"
+}

@@ -1,0 +1,41 @@
+split:
+  ratios: {train: 0.70, val: 0.15, test: 0.15}
+  seed: 42
+  group_by: source_id                 # source 是切分原子；同动物/场次所有片段同侧（AGENTS.md 红线）
+  min_val_sources_per_class: 1
+  min_test_sources_per_class: 1
+  min_val_samples_per_class: 2
+  min_test_samples_per_class: 2
+  # request_seeking 支撑量下限（样本制配额已废除——M19/红队 P0：禁止从 val/test 抽血）
+  min_val_sources_request_seeking: 3
+  # v4：affiliative 获得猫域源（CatMeows B），提高 val/test 源数下限使猫域进入验证
+  min_val_sources_affiliative_relaxed: 3
+  min_test_sources_affiliative_relaxed: 3
+  min_test_sources_request_seeking: 3
+  min_val_samples_request_seeking: 10
+  min_test_samples_request_seeking: 10
+
+  # 旧 source 显式分配（v2 治理结论：高浓度大源保训练，Kaggle 同链家族互相隔离）。
+  # source 名已按 final_manifest_v2.csv 实测核对（2026-10-01）。
+  # 未列出的 source（含全部 CatMeows 猫）由分层贪心自动分配。
+  fixed_source_assignment:
+    positive_1: train                                  # affiliative 81%
+    positive_2: val
+    kaggle_kaggle_cat_vocalization_happy: test
+    defensive_1: train                                 # threat 72%
+    defensive_2: test
+    kaggle_kaggle_cat_vocalization_defense: val
+    kaggle_kaggle_cat_vocalization_paining: val        # pain
+    pain_1: train
+    pain_2: test
+    pain_3: test
+    pain_4: test
+    pain_5: train
+    pain_6: train
+    pain_8: train
+    pain_9: train
+    solicitation_bff3: train                           # request 全部旧源进 train（val/test 由 CatMeows 猫供给）
+    solicitation_bff6: train
+    solicitation_bff8: train
+    solicitation_bff10: train
+    solicitation_bff12: train

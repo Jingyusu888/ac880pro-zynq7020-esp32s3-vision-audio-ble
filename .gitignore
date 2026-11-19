@@ -1,0 +1,85 @@
+# Python & local environments
+.venv*/
+__pycache__/
+*.py[cod]
+.Xil/
+
+# External prebuilt toolchains & large upstream archives
+/ncnn-20261020/
+/ncnn-20261020-source.tar.gz
+/tools/
+/yolov5-v7.0/
+
+# Vendor proprietary SD boot binaries (keep reproducible device tree generator)
+boot_backup/vendor_ubuntu_boot/
+
+# Vivado & xsim generated build directories / logs
+*.runs/
+*.cache/
+*.gen/
+*.ip_user_files/
+*.hw/
+*.sim/
+*.xpr
+*.xsa
+*.jou
+*.log
+*.str
+*.pb
+*.wdb
+fpga/**/sources_1/bd/
+fpga/**/sources_1/ip/
+fpga/**/timing*.rpt
+fpga/**/utilization*.rpt
+fpga/**/sim/work/xsim.dir/
+fpga/**/sim/work/tb_sim*
+fpga/**/sim/work/xvlog*
+fpga/**/sim/work/xelab*
+fpga/**/sim/work/xsim*
+fpga/cam_yolo_ref/docs/build_interview_note.py
+fpga/cam_yolo_ref/docs/obsidian_single_canvas_conversion.json
+猫狗识别/
+
+# Non-code reports / presentations (keep deliverables outside git)
+*.docx
+*.pptx
+*.pdf
+
+# Intermediate ONNX / TorchScript / PyTorch weights (keep deployed .ncnn.{param,bin})
+models/*.onnx
+models/*.pt
+models/*.torchscript
+models/*.pnnx.param
+models/*.pnnx.bin
+models/*_pnnx.py
+models/*_ncnn.py
+
+# Mobile app (Flutter build artifacts & local SDK config)
+mobile_app/flutter_app/build/
+mobile_app/flutter_app/.dart_tool/
+mobile_app/flutter_app/.flutter-plugins*
+mobile_app/flutter_app/android/.gradle/
+mobile_app/flutter_app/android/.kotlin/
+mobile_app/flutter_app/android/local.properties
+*.apk
+
+# Web & audio runtime/build artifacts
+web_audio/app/data/
+web_audio/app/frontend-web/node_modules/
+web_audio/app/frontend-web/dist/
+web_audio/*.egg-info/
+web_audio/src/*.egg-info/
+
+# ESP32 build outputs
+esp32_s3/**/build/
+esp32_s3/vision_ble_bridge_idf/sdkconfig
+esp32_s3/vision_ble_bridge_idf/sdkconfig.old
+
+# Secrets & OS junk
+.env
+*.pem
+*.key
+*_ed25519*
+*.bak
+.DS_Store
+Thumbs.db

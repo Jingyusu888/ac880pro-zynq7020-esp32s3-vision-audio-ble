@@ -1,0 +1,11 @@
+{
+  "name": "PetLink 伴宠",
+  "short_name": "PetLink",
+  "start_url": "ble.html",
+  "display": "standalone",
+  "background_color": "#faf7f2",
+  "theme_color": "#e8973f",
+  "icons": [
+    { "src": "ble_icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

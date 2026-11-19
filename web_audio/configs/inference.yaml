@@ -1,0 +1,9 @@
+inference:
+  window_seconds: 4.0               # 与 features.presets[active].window_seconds 保持一致（S5 后统一由 preset 推导）
+  frontend_preset: v3_8k            # S5 选型后更新；bundle 内 frontend_config 为准
+  thresholds_file: recommended_class_specific_thresholds.json   # 单源（M14）；缺失即拒绝服务
+  max_upload_mb: 50
+  allowed_audio_extensions: [.wav, .mp3, .m4a, .flac, .ogg, .aac, .webm]
+  semantics:
+    reject_is_not_noncat: true      # unknown/uncertain 是置信度拒识，不是猫叫检测（M15）
+    pain_disclaimer: "仅为数据标签提示，不是医疗或健康诊断。"

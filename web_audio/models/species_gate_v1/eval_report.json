@@ -1,0 +1,43 @@
+{
+ "preset": "v3_8k_2s",
+ "classes": [
+  "cat",
+  "dog"
+ ],
+ "val_rows": 1947,
+ "train_rows": 11032,
+ "accuracy": 0.9723,
+ "per_class": {
+  "cat": {
+   "precision": 0.7908,
+   "recall": 0.9793,
+   "f1": 0.875,
+   "support": 193,
+   "recall_ci95": [
+    0.9479,
+    0.9919
+   ]
+  },
+  "dog": {
+   "precision": 0.9977,
+   "recall": 0.9715,
+   "f1": 0.9844,
+   "support": 1754,
+   "recall_ci95": [
+    0.9626,
+    0.9783
+   ]
+  }
+ },
+ "confusion_matrix": [
+  [
+   189,
+   4
+  ],
+  [
+   50,
+   1704
+  ]
+ ],
+ "gate_pass": true
+}

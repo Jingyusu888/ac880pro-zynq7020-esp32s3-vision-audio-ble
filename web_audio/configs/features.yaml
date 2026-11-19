@@ -1,0 +1,13 @@
+features:
+  # 预设定义见 src/petlink/features/extractor.py（FeatureConfig），此处只做选择与窗口参数。
+  active_preset: v3_8k          # 训练/评估主力；v2_16k 仅作回归金标准与对照实验
+  presets:
+    v2_16k:      {sample_rate: 16000, window_seconds: 4.0, note: "回归金标准（240 维含 duration）"}
+    v3_8k:       {sample_rate: 8000,  window_seconds: 4.0, note: "主力：删 band_energy_4000_8000、contrast 边缘适配、duration 不入模"}
+    tiny_8k_2s:  {sample_rate: 8000,  window_seconds: 2.0, note: "Tiny 候选（60 维，无 F0/contrast/logmel）"}
+  training_window:
+    short_clip: zero_pad          # <窗长：尾部补零
+    long_clip: multi_window_k     # >窗长：多点采 K 窗（事件中心不可得，禁单窗 center crop 丢音频）
+    multi_window_k: 3
+    coverage_rms_db: -50.0        # "覆盖"定义：窗内 RMS>-50dB 的帧占比（P2.5 可操作定义）
+    report_padded_subset: true    # 补零样本子集指标必须单独报告

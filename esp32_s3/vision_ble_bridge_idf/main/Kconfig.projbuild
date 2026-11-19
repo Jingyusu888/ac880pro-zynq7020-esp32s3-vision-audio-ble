@@ -1,0 +1,51 @@
+menu "PetLink Vision Bridge Configuration"
+    config PETLINK_WIFI_SSID
+        string "Default Wi-Fi SSID (optional, leave empty for USB-Serial bridge only)"
+        default ""
+
+    config PETLINK_WIFI_PASS
+        string "Default Wi-Fi Password"
+        default ""
+
+    config PETLINK_UDP_PORT
+        int "UDP listen port"
+        default 9000
+
+    config PETLINK_TJC_TX_GPIO
+        int "TJC screen TX GPIO (ESP32 TX -> screen RX)"
+        range 0 48
+        default 18
+
+    config PETLINK_TJC_RX_GPIO
+        int "TJC screen RX GPIO (screen TX -> ESP32 RX)"
+        range 0 48
+        default 21
+
+    config PETLINK_TJC_BAUD
+        int "TJC screen baud rate"
+        range 1200 921600
+        default 9600
+
+    config PETLINK_BCLK_GPIO
+        int "INMP441 BCLK GPIO"
+        range 0 48
+        default 4
+
+    config PETLINK_WS_GPIO
+        int "INMP441 WS GPIO"
+        range 0 48
+        default 5
+
+    config PETLINK_SD_GPIO
+        int "INMP441 SD GPIO"
+        range 0 48
+        default 6
+
+    config PETLINK_I2S_HIGH_ALIGNED
+        bool "24-bit microphone sample is in high 24 bits of received word"
+        default y
+
+    config PETLINK_DEMO_ALWAYS_OUTPUT
+        bool "Compute ranked emotion candidate even when frozen gates reject"
+        default y
+endmenu

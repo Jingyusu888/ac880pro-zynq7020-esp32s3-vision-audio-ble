@@ -1,0 +1,105 @@
+{
+ "bundle_version": "b0_dog_v1",
+ "created_at": "2026-10-20T20:07:06.406499",
+ "frontend_preset": "v3_8k_2s",
+ "window_seconds": null,
+ "class_weight": "balanced",
+ "sklearn_version": "1.8.0",
+ "feature_count": 238,
+ "includes_duration": false,
+ "training": {
+  "feature_table": "analysis\\dog_feat_238_8k_2s.csv",
+  "report": {
+   "preset": "v3_8k_2s",
+   "merge_active": true,
+   "classes": [
+    "active",
+    "alert",
+    "rest"
+   ],
+   "val_rows": 1754,
+   "train_rows": 9936,
+   "accuracy": 0.4897,
+   "macro_f1": 0.426,
+   "per_class": {
+    "active": {
+     "precision": 0.8054,
+     "recall": 0.5,
+     "f1": 0.617,
+     "support": 1200,
+     "recall_ci95": [
+      0.4718,
+      0.5282
+     ]
+    },
+    "alert": {
+     "precision": 0.2539,
+     "recall": 0.4197,
+     "f1": 0.3164,
+     "support": 274,
+     "recall_ci95": [
+      0.3628,
+      0.4789
+     ]
+    },
+    "rest": {
+     "precision": 0.259,
+     "recall": 0.5143,
+     "f1": 0.3445,
+     "support": 280,
+     "recall_ci95": [
+      0.4559,
+      0.5722
+     ]
+    }
+   },
+   "confusion_matrix": [
+    [
+     600,
+     278,
+     322
+    ],
+    [
+     69,
+     115,
+     90
+    ],
+    [
+     76,
+     60,
+     144
+    ]
+   ],
+   "baselines": {
+    "random_macro_f1": 0.3333,
+    "majority": {
+     "label": "active",
+     "acc": 0.6842,
+     "macro_f1": 0.2708
+    },
+    "volume_tree": {
+     "acc": 0.6842,
+     "macro_f1": 0.2709
+    }
+   }
+  }
+ },
+ "pieces": {
+  "saved_models/four_class_classifier.joblib": {
+   "sha256": "739cb68ef9dd475f4cfa2d152813eab6f898ef429ecdc8e23903282dab469662",
+   "bytes": 15025
+  },
+  "feature_columns.json": {
+   "sha256": "382aac3a1ea9959ca41acc98539bf231196bb51bc216a1fb3e7cd66fa4d1240f",
+   "bytes": 4740
+  },
+  "label_maps.json": {
+   "sha256": "42a7cf9305cf80d856afddc42e50971628b0c9e02049961cf7844533bc00799e",
+   "bytes": 85
+  },
+  "recommended_class_specific_thresholds.json": {
+   "sha256": "3eba919155781d85d65ee3dc30f4a4a67949aa8de3031e6e800c3a9f565867d0",
+   "bytes": 123
+  }
+ }
+}

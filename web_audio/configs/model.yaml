@@ -1,0 +1,22 @@
+model:
+  tasks: [coarse, positive_fine, negative_fine]
+  classifier:                       # 与 hierarchical_debug_v2 逐参数一致（回归基线可比）
+    type: logistic_regression
+    class_weight: balanced          # B 系列消融时可切 none（configs 传参，不改代码）
+    max_iter: 5000
+    solver: lbfgs
+    random_state: 42
+  labels:
+    four_class: [affiliative_relaxed, request_seeking, threat_discomfort, pain_distress]
+    coarse:
+      positive_or_request: [affiliative_relaxed, request_seeking]
+      negative_or_distress: [threat_discomfort, pain_distress]
+  bundle:                           # 7 件套原子替换（AGENTS.md 红线 3）
+    pieces:
+      - saved_models/coarse_classifier.joblib
+      - saved_models/positive_fine_classifier.joblib
+      - saved_models/negative_fine_classifier.joblib
+      - feature_columns.json
+      - label_maps.json
+      - recommended_class_specific_thresholds.json
+      - bundle_manifest.json

@@ -1,0 +1,6 @@
+{
+ "gate_confidence_threshold": 0.6,
+ "state_confidence_threshold": 0.6,
+ "tuned": false,
+ "selection_split": "none"
+}

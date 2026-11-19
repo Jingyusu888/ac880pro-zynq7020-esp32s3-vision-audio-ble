@@ -1,0 +1,149 @@
+{
+ "bundle_version": "b0_v5",
+ "created_at": "2026-10-20T14:48:02.275809",
+ "frontend_preset": "v3_8k",
+ "window_seconds": 4.0,
+ "class_weight": "balanced",
+ "sklearn_version": "1.8.0",
+ "feature_count": 238,
+ "includes_duration": false,
+ "training": {
+  "feature_table": "analysis\\feature_table_v5_8k_4s.csv",
+  "rows": {
+   "train": 924,
+   "val": 117,
+   "test": 248
+  },
+  "metrics": {
+   "val_coarse": {
+    "macro_f1": 0.7799,
+    "per_class": {
+     "negative_or_distress": {
+      "precision": 0.6667,
+      "recall": 0.8372,
+      "f1": 0.7423,
+      "support": 43
+     },
+     "positive_or_request": {
+      "precision": 0.8889,
+      "recall": 0.7568,
+      "f1": 0.8175,
+      "support": 74
+     }
+    }
+   },
+   "val_positive_fine": {
+    "macro_f1": 0.63,
+    "per_class": {
+     "affiliative_relaxed": {
+      "precision": 0.76,
+      "recall": 0.76,
+      "f1": 0.76,
+      "support": 50
+     },
+     "request_seeking": {
+      "precision": 0.5,
+      "recall": 0.5,
+      "f1": 0.5,
+      "support": 24
+     }
+    }
+   },
+   "val_negative_fine": {
+    "macro_f1": 0.864,
+    "per_class": {
+     "threat_discomfort": {
+      "precision": 0.9211,
+      "recall": 1.0,
+      "f1": 0.9589,
+      "support": 35
+     },
+     "pain_distress": {
+      "precision": 1.0,
+      "recall": 0.625,
+      "f1": 0.7692,
+      "support": 8
+     }
+    }
+   },
+   "test_coarse": {
+    "macro_f1": 0.4742,
+    "per_class": {
+     "negative_or_distress": {
+      "precision": 0.7857,
+      "recall": 0.5156,
+      "f1": 0.6226,
+      "support": 192
+     },
+     "positive_or_request": {
+      "precision": 0.2377,
+      "recall": 0.5179,
+      "f1": 0.3258,
+      "support": 56
+     }
+    }
+   },
+   "test_positive_fine": {
+    "macro_f1": 0.5722,
+    "per_class": {
+     "affiliative_relaxed": {
+      "precision": 0.5952,
+      "recall": 0.8333,
+      "f1": 0.6944,
+      "support": 30
+     },
+     "request_seeking": {
+      "precision": 0.6429,
+      "recall": 0.3462,
+      "f1": 0.45,
+      "support": 26
+     }
+    }
+   },
+   "test_negative_fine": {
+    "macro_f1": 0.4383,
+    "per_class": {
+     "threat_discomfort": {
+      "precision": 0.9903,
+      "recall": 0.5574,
+      "f1": 0.7133,
+      "support": 183
+     },
+     "pain_distress": {
+      "precision": 0.0899,
+      "recall": 0.8889,
+      "f1": 0.1633,
+      "support": 9
+     }
+    }
+   }
+  }
+ },
+ "pieces": {
+  "saved_models/coarse_classifier.joblib": {
+   "sha256": "ec62f5184c37565ded694d41a831f77b205c94285736d95b49ebcc8be8a6bc13",
+   "bytes": 11281
+  },
+  "saved_models/positive_fine_classifier.joblib": {
+   "sha256": "1ffab2fd70112509fefdc41b3e9f451f524255620d5697ee88ba75a6f32550ec",
+   "bytes": 11281
+  },
+  "saved_models/negative_fine_classifier.joblib": {
+   "sha256": "2c8f69e87150f2a2943732ad6f1c178c907b52aa7e12a042dca4a802f215f36a",
+   "bytes": 11281
+  },
+  "feature_columns.json": {
+   "sha256": "382aac3a1ea9959ca41acc98539bf231196bb51bc216a1fb3e7cd66fa4d1240f",
+   "bytes": 4740
+  },
+  "label_maps.json": {
+   "sha256": "35792a096a7aad7f12684af6c8dd5be421d8d9573108515aa2ce58a4887149a0",
+   "bytes": 321
+  },
+  "recommended_class_specific_thresholds.json": {
+   "sha256": "a05ba7bbcbb4c7cb5a21fcf3dcd4253c61794709031786c568542309b01af8cb",
+   "bytes": 604
+  }
+ },
+ "threshold_tuning": "NO_DOMINATING_CANDIDATE: val 上无任何阈值组合在 coverage 约束内实现 request_false=0（最佳 request_false=5）；保留默认阈值。val=117 行、跨域，调参结论性不足。"
+}

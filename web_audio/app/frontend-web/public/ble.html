@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PetLink 伴宠 · 蓝牙记录</title>
+<link rel="manifest" href="ble_manifest.webmanifest">
+<link rel="icon" href="ble_icon.svg">
+<style>
+ :root{--bg:#faf7f2;--card:#fff;--ink:#3a3226;--accent:#e8973f;--ok:#4c8c4a;--warn:#c0504d}
+ *{box-sizing:border-box}
+ body{font-family:"Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:12px;max-width:560px;margin-inline:auto}
+ h1{font-size:18px;margin:8px 0}
+ button{font-size:15px;padding:10px 16px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-weight:600}
+ button.ghost{background:#e7e0d4;color:var(--ink)}
+ button:disabled{opacity:.5}
+ #status{font-size:13px;color:#8a7f6d;margin:6px 0 12px}
+ .card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+ .emotion{font-size:30px;font-weight:700}
+ .sub{font-size:13px;color:#8a7f6d;margin-top:4px}
+ .gated{display:inline-block;padding:2px 8px;border-radius:8px;font-size:12px;background:#eee}
+ .gated.on{background:#e4efdd;color:var(--ok)}
+ .disclaimer{font-size:11px;color:#a89d8c;margin-top:6px}
+ .day{font-size:13px;font-weight:700;color:#8a7f6d;margin:14px 0 6px}
+ .rec{display:flex;justify-content:space-between;background:var(--card);border-radius:10px;padding:8px 12px;margin-bottom:6px;font-size:14px}
+ .rec .t{color:#8a7f6d;font-size:12px}
+ #toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+ .hint{font-size:12px;color:#a89d8c;line-height:1.6}
+</style>
+</head>
+<body>
+<h1>🐾 PetLink 伴宠</h1>
+<div id="status">未连接。点击“连接板子”，在弹窗中选择 PetLink-Monitor。</div>
+<div id="toolbar">
+ <button id="btnConn">连接板子</button>
+ <button id="btnSync" class="ghost" disabled>同步历史</button>
+ <button id="btnCsv" class="ghost" disabled>导出 CSV</button>
+</div>
+<div class="card">
+ <div class="emotion" id="emo">—</div>
+ <div class="sub" id="emoSub">等待板子数据…</div>
+ <div class="gated" id="gate">置信门槛：—</div>
+ <div class="disclaimer">行为提示，非医疗判断。候选每轮都会给出，仅过置信门槛时才会语音播报。</div>
+</div>
+<div class="card">
+ <b>历次识别</b> <span class="hint" id="count"></span>
+ <div id="hist"><div class="hint">连接后自动累积。</div></div>
+</div>
+<div class="hint">使用说明：① 板子上电自检约 1 分钟后开始识别；② 手机蓝牙开启，点“连接板子”；③ 首次连接自动校时；④ 断联期间的记录会在“同步历史”时补齐。本页数据仅保存在本手机。</div>
+<script>
+const SVC="504c4b4d-4f4e-4954-4f52-000000000001";
+const UUID={time:SVC.slice(0,-4)+"0002",cursor:SVC.slice(0,-4)+"0003",rec:SVC.slice(0,-4)+"0004"};
+const CN={3:"亲近放松",4:"诉求·想要东西",5:"抗拒不适",6:"痛苦倾向",
+ 0:"未知",1:"正向但难细分",2:"负向但难细分"};
+const EMOJI={3:"😌",4:"🍗",5:"😾",6:"🤒",0:"❔",1:"❔",2:"❔"};
+let device,charTime,charCursor,charRec,server;
+const $=id=>document.getElementById(id);
+const fmtRec=r=>{
+  const d=new Date(r.epoch*1000); // epoch 为“本地墙钟按UTC表示”
+  const p=n=>String(n).padStart(2,"0");
+  return {time:`${d.getUTCFullYear()}-${p(d.getUTCMonth()+1)}-${p(d.getUTCDate())} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())}`,
+          day:`${d.getUTCFullYear()}-${p(d.getUTCMonth()+1)}-${p(d.getUTCDate())}`,
+          hm:`${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())}`};
+};
+/* ---- IndexedDB ---- */
+let db;
+function openDb(){return new Promise((res,rej)=>{
+  const q=indexedDB.open("petlink_ble",1);
+  q.onupgradeneeded=()=>{q.result.createObjectStore("records",{keyPath:"seq"});};
+  q.onsuccess=()=>res(q.result); q.onerror=()=>rej(q.error);
+});}
+function dbPut(rec){return new Promise((res,rej)=>{const t=db.transaction("records","readwrite");t.objectStore("records").put(rec);t.oncomplete=res;t.onerror=()=>rej(t.error);});}
+function dbAll(){return new Promise((res,rej)=>{const t=db.transaction("records","readonly");const q=t.objectStore("records").getAll();q.onsuccess=()=>res(q.result.sort((a,b)=>b.seq-a.seq));q.onerror=()=>rej(q.error);});}
+async function lastSeq(){const all=await dbAll();return all.length?Math.max(...all.map(r=>r.seq)):0;}
+/* ---- 渲染 ---- */
+function renderLive(r){
+  const f=fmtRec(r);
+  $("emo").textContent=(EMOJI[r.cand]??"")+" "+(CN[r.cand]??"未知");
+  $("emoSub").textContent=`${f.time} · 轮次 ${r.round} · 候选得分 ${(r.score*100).toFixed(1)}%`;
+  $("gate").textContent=r.trigger?`置信门槛：已过（${CN[r.gate]??"未知"} ${(r.confidence*100).toFixed(1)}%）`:"置信门槛：未过（低置信，仅显示候选）";
+  $("gate").className="gated"+(r.trigger?" on":"");
+}
+async function renderHist(){
+  const all=await dbAll(); $("count").textContent=`（${all.length} 条）`;
+  const box=$("hist"); box.innerHTML="";
+  let day="";
+  for(const r of all){
+    const f=fmtRec(r);
+    if(f.day!==day){day=f.day;const d=document.createElement("div");d.className="day";d.textContent=day;box.appendChild(d);}
+    const div=document.createElement("div");div.className="rec";
+    div.innerHTML=`<span>${(EMOJI[r.cand]??"")+" "+(CN[r.cand]??"未知")}${r.trigger?` <span style="color:var(--ok)">·已播报/过门槛</span>`:""}</span><span class="t">${f.hm}</span>`;
+    box.appendChild(div);
+  }
+}
+/* ---- Web Bluetooth ---- */
+function localAsUtcEpoch(){return Math.floor((Date.now()-new Date().getTimezoneOffset()*60000)/1000);}
+async function connect(){
+  try{
+    device=await navigator.bluetooth.requestDevice({filters:[{namePrefix:"PetLink"}],optionalServices:[SVC]});
+    $("status").textContent="连接中…"; $("btnConn").disabled=true;
+    server=await device.gatt.connect();
+    const svc=await server.getPrimaryService(SVC);
+    charTime=await svc.getCharacteristic(UUID.time);
+    charCursor=await svc.getCharacteristic(UUID.cursor);
+    charRec=await svc.getCharacteristic(UUID.rec);
+    await charRec.startNotifications();
+    charRec.addEventListener("characteristicvaluechanged",e=>{
+      const dv=e.target.value; if(dv.byteLength<20)return;
+      const rec={seq:0,epoch:dv.getUint32(0,true),round:dv.getUint32(4,true),
+        score:dv.getFloat32(8,true),confidence:dv.getFloat32(12,true),
+        cand:dv.getUint8(16),gate:dv.getUint8(17),trigger:dv.getUint8(18)!==0};
+      rec.seq=rec.round; /* 轮次即序列的近似；历史补齐用 cursor */
+      rec.seq=lastSeqFromRound(rec.round);
+      dbPut(rec).then(()=>{renderLive(rec);renderHist();});
+    });
+    device.addEventListener("gattserverdisconnected",()=>{
+      $("status").textContent="已断开。板子在离线继续记录，重连后点“同步历史”补齐。";
+      $("btnConn").disabled=false;
+    });
+    /* 校时 */
+    const now=localAsUtcEpoch(); const b=new ArrayBuffer(4); new DataView(b).setUint32(0,now,true);
+    await charTime.writeValue(b);
+    $("status").textContent="已连接并校时。拉取历史中…";
+    /* 历史补齐：cursor=本地已有最大 seq */
+    const have=await lastSeq();
+    const head=new DataView((await charCursor.readValue()).buffer).getUint32(0,true);
+    const from=Math.min(have,head);
+    const b2=new ArrayBuffer(4); new DataView(b2).setUint32(0,from,true);
+    await charCursor.writeValue(b2);
+    $("btnSync").disabled=false; $("btnCsv").disabled=false;
+    $("status").textContent="已连接。实时接收中（板端历史 "+head+" 条，从第 "+from+" 条补齐）。";
+  }catch(err){ $("status").textContent="连接失败："+err.message; $("btnConn").disabled=false; }
+}
+let maxRound=0;
+function lastSeqFromRound(r){ maxRound=Math.max(maxRound,r); return maxRound; }
+$("btnConn").onclick=connect;
+$("btnSync").onclick=async()=>{
+  if(!charCursor) return;
+  const have=await lastSeq();
+  const head=new DataView((await charCursor.readValue()).buffer).getUint32(0,true);
+  const from=Math.min(have,head);
+  const b=new ArrayBuffer(4); new DataView(b).setUint32(0,from,true);
+  await charCursor.writeValue(b);
+  $("status").textContent=`已请求补齐（板端最新 ${head} 条）。`;
+};
+$("btnCsv").onclick=async()=>{
+  const all=await dbAll();
+  const lines=[["# PetLink 行为提示，非医疗判断"],["seq","本地时间","轮次","候选","候选得分","过门槛标签","过门槛","置信度"]];
+  for(const r of all){const f=fmtRec(r);
+    lines.push([r.seq,f.time,r.round,CN[r.cand]??"未知",(r.score*100).toFixed(1)+"%",CN[r.gate]??"未知",r.trigger?"是":"否",(r.confidence*100).toFixed(1)+"%"]);}
+  const csv="\ufeff"+lines.map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\r\n");
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+  a.download="petlink_records.csv"; a.click();
+};
+if("serviceWorker" in navigator) navigator.serviceWorker.register("ble_sw.js").catch(()=>{});
+openDb().then(async d=>{db=d; await renderHist(); $("btnCsv").disabled=false;});
+if(!navigator.bluetooth) $("status").textContent="此浏览器不支持网页蓝牙（请用安卓 Chrome/Edge，并通过 https 打开本页）。";
+</script>
+</body>
+</html>
