@@ -2,6 +2,8 @@
 
 **Zynq-7020 (AC880PRO) PS+PL 异构边缘视觉计算 × ESP32-S3 端侧声学感知与本地触摸屏 × BLE 移动客户端系统**
 
+> **求实习 ing**：广东某 985 高校电信方向大三学生（FPGA PS+PL 异构加速 / 嵌入式 Linux / ESP32 与端侧 AI），欢迎技术交流或实习内推。
+
 基于 **Xilinx Zynq-7020 (`xc7z020clg484-2`)** 与 **ESP32-S3-N8R2** 构建的全本地化视听协同宠物行为感知系统：
 
 - **边缘视觉端（AC880PRO）**：PL 端完成 OV5640（720p DVP）采集、DDR3L 三帧异步缓存与 1280×720@60Hz HDMI2 实时叠加；通过 `256×144` RGB565 BRAM 单缓冲安全邮箱（`~49.70 ms`）向 PS 端 ARM Linux（`ncnn`）移交缩略图，运行 `YOLOv5n-320` 检测与 `RTMPose-m AP-10K INT8` 17 关键点骨架估计及零训练站/坐/卧姿态判定，最终通过 AXI4-Lite 与 VSYNC 影子锁存两级流水 OSD 无撕裂绘回 HDMI2，并以 UDP JSON 实时外发结构化姿态流。
